@@ -7,8 +7,6 @@ use Orchestra\Testbench\TestCase;
 use QPay\Laravel\Events\PaymentFailed;
 use QPay\Laravel\Events\PaymentReceived;
 use QPay\Laravel\QPayServiceProvider;
-use QPay\Models\PaymentCheckResponse;
-use QPay\Models\PaymentDetail;
 use QPay\QPayClient;
 
 class WebhookControllerTest extends TestCase
@@ -30,21 +28,8 @@ class WebhookControllerTest extends TestCase
     {
         Event::fake();
 
-        $mockResult = new PaymentCheckResponse(
-            count: 1,
-            paidAmount: 1000.0,
-            rows: [
-                new PaymentDetail(
-                    paymentId: 'pay_123',
-                    paymentStatus: 'PAID',
-                    paymentAmount: 1000.0,
-                    paymentCurrency: 'MNT',
-                    paymentWallet: 'qpay',
-                    paymentType: 'P2P',
-                    transactionId: 'txn_123',
-                ),
-            ],
-        );
+        $mockResult = new \stdClass();
+        $mockResult->rows = [(object)['paymentId' => 'pay_123', 'paymentStatus' => 'PAID']];
 
         $mock = $this->createMock(QPayClient::class);
         $mock->method('checkPayment')->willReturn($mockResult);
@@ -66,11 +51,8 @@ class WebhookControllerTest extends TestCase
     {
         Event::fake();
 
-        $mockResult = new PaymentCheckResponse(
-            count: 0,
-            paidAmount: 0.0,
-            rows: [],
-        );
+        $mockResult = new \stdClass();
+        $mockResult->rows = [];
 
         $mock = $this->createMock(QPayClient::class);
         $mock->method('checkPayment')->willReturn($mockResult);
