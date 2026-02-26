@@ -1,5 +1,7 @@
 # QPay Laravel
 
+[![CI](https://github.com/qpay-sdk/qpay-laravel/actions/workflows/ci.yml/badge.svg)](https://github.com/qpay-sdk/qpay-laravel/actions)
+
 QPay V2 payment integration for Laravel.
 
 ## Install
