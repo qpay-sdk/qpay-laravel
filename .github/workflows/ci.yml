@@ -9,6 +9,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      QPAY_BASE_URL: https://merchant.qpay.mn
+      QPAY_USERNAME: test_user
+      QPAY_PASSWORD: test_pass
+      QPAY_INVOICE_CODE: TEST_CODE
+      QPAY_CALLBACK_URL: https://example.com/webhook
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2

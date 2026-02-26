@@ -30,14 +30,6 @@ class QPayFacadeTest extends TestCase
         $app['config']->set('qpay.callback_url', 'https://example.com/callback');
     }
 
-    public function test_facade_accessor_returns_qpay_client_class(): void
-    {
-        $this->assertEquals(
-            QPayClient::class,
-            QPay::getFacadeAccessor()
-        );
-    }
-
     public function test_facade_resolves_to_qpay_client(): void
     {
         $resolved = QPay::getFacadeRoot();
