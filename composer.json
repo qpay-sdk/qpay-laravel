@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "usukhbayar/qpay-php": "dev-main",
+        "usukhbayar/qpay-php": "^1.0",
         "illuminate/support": "^10.0|^11.0"
     },
     "require-dev": {
