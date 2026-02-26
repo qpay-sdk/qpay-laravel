@@ -1,0 +1,28 @@
+{
+    "name": "qpay-sdk/laravel",
+    "description": "QPay V2 payment integration for Laravel",
+    "version": "1.0.0",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "qpay-sdk/qpay-php": "^1.0",
+        "illuminate/support": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "QPay\\Laravel\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "QPay\\Laravel\\QPayServiceProvider"
+            ],
+            "aliases": {
+                "QPay": "QPay\\Laravel\\Facades\\QPay"
+            }
+        }
+    },
+    "minimum-stability": "stable"
+}
