@@ -1,6 +1,8 @@
 # QPay Laravel
 
 [![CI](https://github.com/qpay-sdk/qpay-laravel/actions/workflows/ci.yml/badge.svg)](https://github.com/qpay-sdk/qpay-laravel/actions)
+[![Packagist](https://img.shields.io/packagist/v/qpay-sdk/laravel)](https://packagist.org/packages/qpay-sdk/laravel)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 QPay V2 payment integration for Laravel.
 
