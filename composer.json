@@ -9,9 +9,18 @@
         "qpay-sdk/qpay-php": "^1.0",
         "illuminate/support": "^10.0|^11.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0|^11.0",
+        "orchestra/testbench": "^8.0|^9.0"
+    },
     "autoload": {
         "psr-4": {
             "QPay\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "QPay\\Laravel\\Tests\\": "tests/"
         }
     },
     "extra": {
