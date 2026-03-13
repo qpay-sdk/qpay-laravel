@@ -10,7 +10,7 @@ class PaymentReceived
     use Dispatchable;
 
     public function __construct(
-        public readonly string $invoiceId,
+        public readonly string $paymentId,
         public readonly PaymentCheckResponse $result,
     ) {}
 }

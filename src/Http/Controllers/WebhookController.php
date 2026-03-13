@@ -2,8 +2,8 @@
 
 namespace QPay\Laravel\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use QPay\Laravel\Events\PaymentReceived;
 use QPay\Laravel\Events\PaymentFailed;
@@ -12,30 +12,30 @@ use QPay\QPayClient;
 
 class WebhookController extends Controller
 {
-    public function __invoke(Request $request, QPayClient $client): JsonResponse
+    public function __invoke(Request $request, QPayClient $client): Response
     {
-        $invoiceId = $request->input('invoice_id');
+        $paymentId = $request->query('qpay_payment_id');
 
-        if (! $invoiceId) {
-            return response()->json(['error' => 'Missing invoice_id'], 400);
+        if (! $paymentId) {
+            return response('Missing qpay_payment_id', 400);
         }
 
         try {
             $result = $client->checkPayment(new PaymentCheckRequest(
                 objectType: 'INVOICE',
-                objectId: $invoiceId,
+                objectId: $paymentId,
             ));
 
             if (count($result->rows) > 0) {
-                event(new PaymentReceived($invoiceId, $result));
-                return response()->json(['status' => 'paid']);
+                event(new PaymentReceived($paymentId, $result));
+            } else {
+                event(new PaymentFailed($paymentId, 'No payment found'));
             }
 
-            event(new PaymentFailed($invoiceId, 'No payment found'));
-            return response()->json(['status' => 'unpaid']);
+            return response('SUCCESS', 200);
         } catch (\Throwable $e) {
-            event(new PaymentFailed($invoiceId, $e->getMessage()));
-            return response()->json(['error' => $e->getMessage()], 500);
+            event(new PaymentFailed($paymentId, $e->getMessage()));
+            return response('FAILED', 500);
         }
     }
 }

@@ -17,15 +17,15 @@ class WebhookControllerTest extends TestCase
         return [QPayServiceProvider::class];
     }
 
-    public function test_webhook_returns_400_without_invoice_id(): void
+    public function test_webhook_returns_400_without_payment_id(): void
     {
-        $response = $this->postJson(config('qpay.webhook_path'));
+        $response = $this->get(config('qpay.webhook_path'));
 
-        $response->assertStatus(400)
-            ->assertJson(['error' => 'Missing invoice_id']);
+        $response->assertStatus(400);
+        $this->assertSame('Missing qpay_payment_id', $response->getContent());
     }
 
-    public function test_webhook_returns_paid_when_payment_found(): void
+    public function test_webhook_returns_success_when_payment_found(): void
     {
         Event::fake();
 
@@ -39,19 +39,17 @@ class WebhookControllerTest extends TestCase
         $mock->method('checkPayment')->willReturn($mockResult);
         $this->app->instance(QPayClient::class, $mock);
 
-        $response = $this->postJson(config('qpay.webhook_path'), [
-            'invoice_id' => 'inv_123',
-        ]);
+        $response = $this->get(config('qpay.webhook_path') . '?qpay_payment_id=pay_123');
 
-        $response->assertStatus(200)
-            ->assertJson(['status' => 'paid']);
+        $response->assertStatus(200);
+        $this->assertSame('SUCCESS', $response->getContent());
 
         Event::assertDispatched(PaymentReceived::class, function ($event) {
-            return $event->invoiceId === 'inv_123';
+            return $event->paymentId === 'pay_123';
         });
     }
 
-    public function test_webhook_returns_unpaid_when_no_payment(): void
+    public function test_webhook_returns_success_when_no_payment(): void
     {
         Event::fake();
 
@@ -65,15 +63,13 @@ class WebhookControllerTest extends TestCase
         $mock->method('checkPayment')->willReturn($mockResult);
         $this->app->instance(QPayClient::class, $mock);
 
-        $response = $this->postJson(config('qpay.webhook_path'), [
-            'invoice_id' => 'inv_456',
-        ]);
+        $response = $this->get(config('qpay.webhook_path') . '?qpay_payment_id=pay_456');
 
-        $response->assertStatus(200)
-            ->assertJson(['status' => 'unpaid']);
+        $response->assertStatus(200);
+        $this->assertSame('SUCCESS', $response->getContent());
 
         Event::assertDispatched(PaymentFailed::class, function ($event) {
-            return $event->invoiceId === 'inv_456'
+            return $event->paymentId === 'pay_456'
                 && $event->reason === 'No payment found';
         });
     }
@@ -86,15 +82,13 @@ class WebhookControllerTest extends TestCase
         $mock->method('checkPayment')->willThrowException(new \RuntimeException('API error'));
         $this->app->instance(QPayClient::class, $mock);
 
-        $response = $this->postJson(config('qpay.webhook_path'), [
-            'invoice_id' => 'inv_789',
-        ]);
+        $response = $this->get(config('qpay.webhook_path') . '?qpay_payment_id=pay_789');
 
-        $response->assertStatus(500)
-            ->assertJson(['error' => 'API error']);
+        $response->assertStatus(500);
+        $this->assertSame('FAILED', $response->getContent());
 
         Event::assertDispatched(PaymentFailed::class, function ($event) {
-            return $event->invoiceId === 'inv_789'
+            return $event->paymentId === 'pay_789'
                 && $event->reason === 'API error';
         });
     }

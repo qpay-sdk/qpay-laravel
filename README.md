@@ -56,7 +56,7 @@ Listen for payment events:
 use QPay\Laravel\Events\PaymentReceived;
 
 Event::listen(PaymentReceived::class, function ($event) {
-    // $event->invoiceId
+    // $event->paymentId
     // $event->result->rows
 });
 ```

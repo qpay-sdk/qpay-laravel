@@ -9,7 +9,7 @@ class PaymentFailed
     use Dispatchable;
 
     public function __construct(
-        public readonly string $invoiceId,
+        public readonly string $paymentId,
         public readonly string $reason,
     ) {}
 }
